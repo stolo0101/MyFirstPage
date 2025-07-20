@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>날씨</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🌦️ 날씨</h1>
+    <input type="text" id="city" placeholder="도시 이름 입력 (예: Seoul)">
+    <button onclick="getWeather()">확인</button>
+    <div id="result">여기에 날씨가 표시됩니다.</div>
+
+    <script>
+        const API_KEY = "7c24ccd99e7f50b1a8507ff36419f930"; // OpenWeather에서 받은 키로 교체
+
+        function getWeather() {
+            const city = document.getElementById("city").value.trim();
+            if (!city) return alert("도시명을 입력하세요!");
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=kr`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("도시를 찾을 수 없어요!");
+                    return response.json();
+                })
+                .then(data => {
+                    const temp = data.main.temp;
+                    const weather = data.weather[0].description;
+                    const icon = data.weather[0].icon;
+                    const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
+                    document.getElementById("result").innerHTML =
+                        `<h2>${city}의 현재 날씨</h2>
+             <img src="${iconUrl}" alt="날씨 아이콘">
+             <p><strong>${weather}</strong></p>
+             <p>🌡️ 온도: ${temp}°C</p>`;
+                })
+                .catch(err => {
+                    document.getElementById("result").innerText = err.message;
+                });
+        }
+    </script>
+</body>
+
+</html>
